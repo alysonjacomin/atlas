@@ -119,14 +119,8 @@ std::unique_ptr<Event> Spells::getEvent(const std::string& nodeName)
 
 bool Spells::registerEvent(std::unique_ptr<Event> event, const pugi::xml_node&)
 {
-	Spell* spell = dynamic_cast<Spell*>(event.get());
-	if (!spell) {
-		return false;
-	}
-
-	if (InstantSpell* instantPtr = spell->getInstantSpell()) {
-		event.release();
-		std::shared_ptr<InstantSpell> instant{instantPtr};
+	auto spellEvent = std::shared_ptr<Event>{std::move(event)};
+	if (auto instant = std::dynamic_pointer_cast<InstantSpell>(spellEvent)) {
 		auto result = instants.emplace(instant->getWords(), instant);
 		if (!result.second) {
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: "
@@ -135,9 +129,7 @@ bool Spells::registerEvent(std::unique_ptr<Event> event, const pugi::xml_node&)
 		return result.second;
 	}
 
-	if (RuneSpell* runePtr = spell->getRuneSpell()) {
-		event.release();
-		std::shared_ptr<RuneSpell> rune{runePtr};
+	if (auto rune = std::dynamic_pointer_cast<RuneSpell>(spellEvent)) {
 		auto result = runes.emplace(rune->getRuneItemId(), rune);
 		if (!result.second) {
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: "
