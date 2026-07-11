@@ -776,7 +776,7 @@ void Monster::onAttacking(std::chrono::milliseconds interval)
 			break;
 		}
 
-		auto spell = spellBlock.spell.lock();
+		const auto& spell = spellBlock.spell.lock();
 		if (!spell) {
 			continue;
 		}
@@ -919,7 +919,7 @@ void Monster::onThinkDefense(std::chrono::milliseconds interval)
 	defenseTicks += interval;
 
 	for (const spellBlock_t& spellBlock : mType->info.defenseSpells) {
-		auto spell = spellBlock.spell.lock();
+		const auto& spell = spellBlock.spell.lock();
 		if (!spell) {
 			continue;
 		}
@@ -1118,7 +1118,7 @@ static void pushCreatures(const std::shared_ptr<Tile>& tile)
 		std::shared_ptr<Monster> lastPushedMonster = nullptr;
 
 		for (size_t i = 0; i < creatures->size();) {
-			if (const auto monster = creatures->at(i)->asMonster()) {
+			if (const auto& monster = creatures->at(i)->asMonster()) {
 				if (monster->isPushable()) {
 					if (monster != lastPushedMonster && pushCreature(monster)) {
 						lastPushedMonster = monster;

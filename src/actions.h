@@ -83,7 +83,7 @@ public:
 	ReturnValue canUseFar(const std::shared_ptr<const Creature>& creature, const Position& toPos, bool checkLineOfSight,
 	                      bool checkFloor);
 
-	bool registerLuaEvent(std::shared_ptr<Action> event);
+	bool registerLuaEvent(const std::shared_ptr<Action>& event);
 	void clear(bool fromLua) override final;
 
 	bool isValid(const std::map<std::shared_ptr<Action>, std::vector<uint16_t>>& map,
@@ -110,7 +110,7 @@ private:
 	LuaScriptInterface& getScriptInterface() override;
 	std::string_view getScriptBaseName() const override { return "actions"; }
 	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::shared_ptr<Event>, const pugi::xml_node&) override { return false; }
+	bool registerEvent(const std::shared_ptr<Event>&, const pugi::xml_node&) override { return false; }
 
 	using ActionUseMap = std::map<uint16_t, std::shared_ptr<Action>>;
 	ActionUseMap useItemMap;
@@ -120,7 +120,7 @@ private:
 	std::map<std::shared_ptr<Action>, std::vector<uint16_t>> uids;
 	std::map<std::shared_ptr<Action>, std::vector<uint16_t>> aids;
 
-	Action* getAction(const std::shared_ptr<const Item>& item);
+	std::shared_ptr<Action> getAction(const std::shared_ptr<const Item>& item);
 	void clearMap(ActionUseMap& map, bool fromLua);
 
 	LuaScriptInterface scriptInterface;

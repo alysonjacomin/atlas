@@ -117,25 +117,27 @@ std::shared_ptr<Event> Spells::getEvent(const std::string& nodeName)
 	return nullptr;
 }
 
-bool Spells::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
+bool Spells::registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node&)
 {
-	if (auto talkAction = event->asTalkAction()) {
-		if (auto instant = talkAction->asInstantSpell()) {
-			auto result = instants.emplace(instant->getWords(), instant);
+	if (const auto& talkAction = event->asTalkAction()) {
+		if (const auto& instant = talkAction->asInstantSpell()) {
+			const auto& words = instant->getWords();
+			auto result = instants.emplace(words, instant);
 			if (!result.second) {
 				std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: "
-				          << instant->getWords() << std::endl;
+				          << words << std::endl;
 			}
 			return result.second;
 		}
 	}
 
-	if (auto action = event->asAction()) {
-		if (auto rune = action->asRuneSpell()) {
-			auto result = runes.emplace(rune->getRuneItemId(), rune);
+	if (const auto& action = event->asAction()) {
+		if (const auto& rune = action->asRuneSpell()) {
+			const auto id = rune->getRuneItemId();
+			auto result = runes.emplace(id, rune);
 			if (!result.second) {
-				std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: "
-				          << rune->getRuneItemId() << std::endl;
+				std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: " << id
+				          << std::endl;
 			}
 			return result.second;
 		}
@@ -144,14 +146,14 @@ bool Spells::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
 	return false;
 }
 
-bool Spells::registerInstantLuaEvent(std::shared_ptr<InstantSpell> instant)
+bool Spells::registerInstantLuaEvent(const std::shared_ptr<InstantSpell>& instant)
 {
 	if (!instant) {
 		return false;
 	}
 
-	const auto words = instant->getWords();
-	auto result = instants.emplace(instant->getWords(), instant);
+	const auto& words = instant->getWords();
+	auto result = instants.emplace(words, instant);
 	if (!result.second) {
 		std::cout << "[Warning - Spells::registerInstantLuaEvent] Duplicate registered instant spell with words: "
 		          << words << std::endl;
@@ -160,14 +162,14 @@ bool Spells::registerInstantLuaEvent(std::shared_ptr<InstantSpell> instant)
 	return result.second;
 }
 
-bool Spells::registerRuneLuaEvent(std::shared_ptr<RuneSpell> rune)
+bool Spells::registerRuneLuaEvent(const std::shared_ptr<RuneSpell>& rune)
 {
 	if (!rune) {
 		return false;
 	}
 
 	const auto id = rune->getRuneItemId();
-	auto result = runes.emplace(rune->getRuneItemId(), rune);
+	auto result = runes.emplace(id, rune);
 	if (!result.second) {
 		std::cout << "[Warning - Spells::registerRuneLuaEvent] Duplicate registered rune with id: " << id << std::endl;
 	}
@@ -536,7 +538,14 @@ bool Spell::playerSpellCheck(const std::shared_ptr<Player>& player) const
 		return false;
 	}
 
-	if (!tfs::events::player::onSpellCheck(player, this)) {
+	std::shared_ptr<const Spell> spell;
+	if (isInstant()) {
+		spell = getInstantSpell();
+	} else {
+		spell = getRuneSpell();
+	}
+
+	if (!spell || !tfs::events::player::onSpellCheck(player, spell)) {
 		return false;
 	}
 

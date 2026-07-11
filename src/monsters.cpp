@@ -159,7 +159,7 @@ bool Monsters::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 		}
 	}
 
-	if (auto spell = g_spells->getSpellByName(name)) {
+	if (const auto& spell = g_spells->getSpellByName(name)) {
 		sb.spell = spell;
 		return true;
 	}
@@ -177,17 +177,17 @@ bool Monsters::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 			needTarget = attr.as_bool();
 		}
 
-		auto combatSpellPtr = std::make_shared<CombatSpell>(nullptr, needTarget, needDirection);
-		if (!combatSpellPtr->loadScript("data/" + std::string{g_spells->getScriptBaseName()} + "/scripts/" +
+		auto getCombatSpell = std::make_shared<CombatSpell>(nullptr, needTarget, needDirection);
+		if (!getCombatSpell->loadScript("data/" + std::string{g_spells->getScriptBaseName()} + "/scripts/" +
 		                                scriptName)) {
 			return false;
 		}
 
-		if (!combatSpellPtr->loadScriptCombat()) {
+		if (!getCombatSpell->loadScriptCombat()) {
 			return false;
 		}
 
-		combatSpell = combatSpellPtr;
+		combatSpell = getCombatSpell;
 		combatSpell->getCombat()->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue,
 		                                                0);
 	} else {
@@ -581,26 +581,26 @@ bool Monsters::deserializeSpell(MonsterSpell* spell, spellBlock_t& sb, const std
 		sb.minCombatValue = value;
 	}
 
-	if (auto spellPtr = g_spells->getSpellByName(spell->name)) {
-		sb.spell = spellPtr;
+	if (const auto& getSpell = g_spells->getSpellByName(spell->name)) {
+		sb.spell = getSpell;
 		return true;
 	}
 
 	std::shared_ptr<CombatSpell> combatSpell = nullptr;
 
 	if (spell->isScripted) {
-		auto combatSpellPtr = std::make_shared<CombatSpell>(nullptr, spell->needTarget, spell->needDirection);
-		if (!combatSpellPtr->loadScript("data/" + std::string{g_spells->getScriptBaseName()} + "/scripts/" +
+		auto getCombatSpell = std::make_shared<CombatSpell>(nullptr, spell->needTarget, spell->needDirection);
+		if (!getCombatSpell->loadScript("data/" + std::string{g_spells->getScriptBaseName()} + "/scripts/" +
 		                                spell->scriptName)) {
 			std::cout << "cannot find file" << std::endl;
 			return false;
 		}
 
-		if (!combatSpellPtr->loadScriptCombat()) {
+		if (!getCombatSpell->loadScriptCombat()) {
 			return false;
 		}
 
-		combatSpell = combatSpellPtr;
+		combatSpell = getCombatSpell;
 		combatSpell->getCombat()->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue,
 		                                                0);
 	} else {

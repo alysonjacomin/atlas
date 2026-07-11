@@ -83,14 +83,14 @@ public:
 	TalkActionResult_t playerSaySpell(const std::shared_ptr<Player>& player, SpeakClasses type,
 	                                  const std::string& words) const;
 
-	bool registerLuaEvent(std::shared_ptr<TalkAction> event);
+	bool registerLuaEvent(const std::shared_ptr<TalkAction>& event);
 	void clear(bool fromLua) override final;
 
 private:
 	LuaScriptInterface& getScriptInterface() override;
 	std::string_view getScriptBaseName() const override { return "talkactions"; }
 	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node) override;
+	bool registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node& node) override;
 
 	std::map<std::string, std::shared_ptr<TalkAction>> talkActions;
 

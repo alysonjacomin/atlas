@@ -74,7 +74,7 @@ std::shared_ptr<Event> Actions::getEvent(const std::string& nodeName)
 	return std::make_shared<Action>(&scriptInterface);
 }
 
-bool Actions::registerLuaEvent(std::shared_ptr<Action> event)
+bool Actions::registerLuaEvent(const std::shared_ptr<Action>& event)
 {
 	if (isValid(ids, event)) {
 		const auto& range = getItemIdRange(event);
@@ -130,7 +130,7 @@ ReturnValue Actions::canUse(const std::shared_ptr<const Player>& player, const P
 ReturnValue Actions::canUse(const std::shared_ptr<const Player>& player, const Position& pos,
                             const std::shared_ptr<const Item>& item)
 {
-	Action* action = getAction(item);
+	const auto& action = getAction(item);
 	if (action) {
 		return action->canExecuteAction(player, pos);
 	}
@@ -160,30 +160,30 @@ ReturnValue Actions::canUseFar(const std::shared_ptr<const Creature>& creature, 
 	return RETURNVALUE_NOERROR;
 }
 
-Action* Actions::getAction(const std::shared_ptr<const Item>& item)
+std::shared_ptr<Action> Actions::getAction(const std::shared_ptr<const Item>& item)
 {
 	if (item->hasAttribute(ITEM_ATTRIBUTE_UNIQUEID)) {
 		auto it = uniqueItemMap.find(item->getUniqueId());
 		if (it != uniqueItemMap.end()) {
-			return it->second.get();
+			return it->second;
 		}
 	}
 
 	if (item->hasAttribute(ITEM_ATTRIBUTE_ACTIONID)) {
 		auto it = actionItemMap.find(item->getActionId());
 		if (it != actionItemMap.end()) {
-			return it->second.get();
+			return it->second;
 		}
 	}
 
 	auto it = useItemMap.find(item->getID());
 	if (it != useItemMap.end()) {
-		return it->second.get();
+		return it->second;
 	}
 
 	// rune items
 	if (const auto& rune = g_spells->getRuneSpell(item->getID())) {
-		return rune.get();
+		return rune;
 	}
 	return nullptr;
 }
@@ -197,7 +197,7 @@ ReturnValue Actions::internalUseItem(const std::shared_ptr<Player>& player, cons
 		}
 	}
 
-	Action* action = getAction(item);
+	const auto& action = getAction(item);
 	if (action) {
 		if (action->isScripted()) {
 			if (action->executeUse(player, item, pos, nullptr, pos, isHotkey)) {
@@ -316,7 +316,7 @@ bool Actions::useItemEx(const std::shared_ptr<Player>& player, const Position& f
 	player->setNextAction(std::chrono::steady_clock::now() + cooldown);
 	player->sendUseItemCooldown(cooldown);
 
-	Action* action = getAction(item);
+	const auto& action = getAction(item);
 	if (!action) {
 		player->sendCancelMessage(RETURNVALUE_CANNOTUSETHISOBJECT);
 		return false;

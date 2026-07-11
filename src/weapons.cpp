@@ -97,9 +97,9 @@ std::shared_ptr<Event> Weapons::getEvent(const std::string& nodeName)
 	return nullptr;
 }
 
-bool Weapons::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
+bool Weapons::registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node&)
 {
-	auto weapon = event->asWeapon();
+	const auto& weapon = event->asWeapon();
 	if (!weapon) {
 		return false;
 	}
@@ -113,10 +113,10 @@ bool Weapons::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
 	return result.second;
 }
 
-bool Weapons::registerLuaEvent(std::shared_ptr<Weapon> weapon)
+bool Weapons::registerLuaEvent(const std::shared_ptr<Weapon>& weapon)
 {
 	auto weaponId = weapon->getID();
-	weapons[weaponId] = std::move(weapon);
+	weapons[weaponId] = weapon;
 	return true;
 }
 

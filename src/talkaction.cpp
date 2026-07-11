@@ -36,9 +36,9 @@ std::shared_ptr<Event> TalkActions::getEvent(const std::string& nodeName)
 	return std::make_shared<TalkAction>(&scriptInterface);
 }
 
-bool TalkActions::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
+bool TalkActions::registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node&)
 {
-	auto talkAction = event->asTalkAction();
+	const auto& talkAction = event->asTalkAction();
 	if (!talkAction) {
 		return false;
 	}
@@ -52,7 +52,7 @@ bool TalkActions::registerEvent(std::shared_ptr<Event> event, const pugi::xml_no
 	return true;
 }
 
-bool TalkActions::registerLuaEvent(std::shared_ptr<TalkAction> talkAction)
+bool TalkActions::registerLuaEvent(const std::shared_ptr<TalkAction>& talkAction)
 {
 	std::vector<std::string> words = talkAction->getWordsMap();
 

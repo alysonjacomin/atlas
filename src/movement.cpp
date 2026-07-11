@@ -103,9 +103,9 @@ std::shared_ptr<Event> MoveEvents::getEvent(const std::string& nodeName)
 	return std::make_shared<MoveEvent>(&scriptInterface);
 }
 
-bool MoveEvents::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node)
+bool MoveEvents::registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node& node)
 {
-	auto moveEvent = event->asMoveEvent();
+	const auto& moveEvent = event->asMoveEvent();
 	if (!moveEvent) {
 		return false;
 	}
@@ -208,7 +208,7 @@ bool MoveEvents::registerEvent(std::shared_ptr<Event> event, const pugi::xml_nod
 	return true;
 }
 
-bool MoveEvents::registerLuaFunction(std::shared_ptr<MoveEvent> event)
+bool MoveEvents::registerLuaFunction(const std::shared_ptr<MoveEvent>& event)
 {
 	const MoveEvent_t eventType = event->getEventType();
 	if (eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM) {
@@ -244,7 +244,7 @@ bool MoveEvents::registerLuaFunction(std::shared_ptr<MoveEvent> event)
 	return true;
 }
 
-bool MoveEvents::registerLuaEvent(std::shared_ptr<MoveEvent> event)
+bool MoveEvents::registerLuaEvent(const std::shared_ptr<MoveEvent>& event)
 {
 	const MoveEvent_t eventType = event->getEventType();
 	if (eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM) {
@@ -461,7 +461,7 @@ uint32_t MoveEvents::onCreatureMove(const std::shared_ptr<Creature>& creature, c
 ReturnValue MoveEvents::onPlayerEquip(const std::shared_ptr<Player>& player, const std::shared_ptr<Item>& item,
                                       slots_t slot, bool isCheck)
 {
-	auto moveEvent = getEvent(item, MOVE_EVENT_EQUIP, slot);
+	const auto& moveEvent = getEvent(item, MOVE_EVENT_EQUIP, slot);
 	if (!moveEvent) {
 		return RETURNVALUE_NOERROR;
 	}
@@ -471,7 +471,7 @@ ReturnValue MoveEvents::onPlayerEquip(const std::shared_ptr<Player>& player, con
 ReturnValue MoveEvents::onPlayerDeEquip(const std::shared_ptr<Player>& player, const std::shared_ptr<Item>& item,
                                         slots_t slot)
 {
-	auto moveEvent = getEvent(item, MOVE_EVENT_DEEQUIP, slot);
+	const auto& moveEvent = getEvent(item, MOVE_EVENT_DEEQUIP, slot);
 	if (!moveEvent) {
 		// If the item does not have an event, we make sure to reset the slot, since some items transform into items
 		// without events.

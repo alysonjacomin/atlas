@@ -960,7 +960,7 @@ int luaPlayerSetGuildLevel(lua_State* L)
 	}
 
 	uint8_t level = tfs::lua::getNumber<uint8_t>(L, 2);
-	if (auto rank = guild->getRankByLevel(level)) {
+	if (const auto& rank = guild->getRankByLevel(level)) {
 		player->setGuildRank(rank);
 		tfs::lua::pushBoolean(L, true);
 	} else {
@@ -1461,7 +1461,7 @@ int luaPlayerChannelSay(lua_State* L)
 		return 1;
 	}
 
-	auto speaker = tfs::lua::getCreature(L, 2);
+	const auto& speaker = tfs::lua::getCreature(L, 2);
 	SpeakClasses type = tfs::lua::getNumber<SpeakClasses>(L, 3);
 	const std::string& text = tfs::lua::getString(L, 4);
 	uint16_t channelId = tfs::lua::getNumber<uint16_t>(L, 5);
@@ -2059,8 +2059,13 @@ int luaPlayerCanCast(lua_State* L)
 {
 	// player:canCast(spell)
 	const auto& player = tfs::lua::getSharedPtr<Player>(L, 1);
-	std::shared_ptr<Spell> spell = lua_isuserdata(L, 2) ? tfs::lua::getSharedPtr<Spell>(L, 2) : nullptr;
-	auto instant = spell ? spell->asInstantSpell() : nullptr;
+	if (!lua_isuserdata(L, 2)) {
+		lua_pushnil(L);
+		return 1;
+	}
+
+	const auto& spell = tfs::lua::getSharedPtr<Spell>(L, 2);
+	const auto& instant = spell ? spell->asInstantSpell() : nullptr;
 	if (player && instant) {
 		tfs::lua::pushBoolean(L, instant->canCast(player));
 	} else {

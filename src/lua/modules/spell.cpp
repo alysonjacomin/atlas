@@ -38,14 +38,12 @@ int luaSpellCreate(lua_State* L)
 		spellType = static_cast<SpellType_t>(id);
 	} else if (lua_isstring(L, 2)) {
 		std::string arg = tfs::lua::getString(L, 2);
-		auto instant = g_spells->getInstantSpellByName(arg);
-		if (instant) {
+		if (const auto& instant = g_spells->getInstantSpellByName(arg)) {
 			tfs::lua::pushSharedPtr<Spell>(L, instant);
 			tfs::lua::setMetatable(L, -1, "Spell");
 			return 1;
 		}
-		instant = g_spells->getInstantSpell(arg);
-		if (instant) {
+		if (const auto& instant = g_spells->getInstantSpell(arg)) {
 			tfs::lua::pushSharedPtr<Spell>(L, instant);
 			tfs::lua::setMetatable(L, -1, "Spell");
 			return 1;
@@ -580,7 +578,7 @@ int luaSpellWords(lua_State* L)
 {
 	// spell:words(words[, separator = ""])
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getInstantSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getInstantSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushString(L, spell->getWords());
@@ -606,7 +604,7 @@ int luaSpellNeedDirection(lua_State* L)
 {
 	// spell:needDirection(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getInstantSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getInstantSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getNeedDirection());
@@ -625,7 +623,7 @@ int luaSpellHasParams(lua_State* L)
 {
 	// spell:hasParams(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getInstantSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getInstantSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getHasParam());
@@ -644,7 +642,7 @@ int luaSpellHasPlayerNameParam(lua_State* L)
 {
 	// spell:hasPlayerNameParam(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getInstantSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getInstantSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getHasPlayerNameParam());
@@ -663,7 +661,7 @@ int luaSpellNeedCasterTargetOrDirection(lua_State* L)
 {
 	// spell:needCasterTargetOrDirection(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getInstantSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getInstantSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getNeedCasterTargetOrDirection());
@@ -682,7 +680,7 @@ int luaSpellIsBlockingWalls(lua_State* L)
 {
 	// spell:blockWalls(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getInstantSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getInstantSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getBlockWalls());
@@ -701,7 +699,7 @@ int luaSpellRuneLevel(lua_State* L)
 {
 	// spell:runeLevel(level)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getRuneSpell() : nullptr;
 	int32_t level = tfs::lua::getNumber<int32_t>(L, 2);
 	if (spell) {
 		if (lua_gettop(L) == 1) {
@@ -721,7 +719,7 @@ int luaSpellRuneMagicLevel(lua_State* L)
 {
 	// spell:runeMagicLevel(magLevel)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getRuneSpell() : nullptr;
 	int32_t magLevel = tfs::lua::getNumber<int32_t>(L, 2);
 	if (spell) {
 		if (lua_gettop(L) == 1) {
@@ -741,7 +739,7 @@ int luaSpellRuneId(lua_State* L)
 {
 	// spell:runeId(id)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto rune = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& rune = spellBase ? spellBase->getRuneSpell() : nullptr;
 	if (rune) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushNumber(L, rune->getRuneItemId());
@@ -760,7 +758,7 @@ int luaSpellCharges(lua_State* L)
 {
 	// spell:charges(charges)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getRuneSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushNumber(L, spell->getCharges());
@@ -779,7 +777,7 @@ int luaSpellAllowFarUse(lua_State* L)
 {
 	// spell:allowFarUse(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getRuneSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getAllowFarUse());
@@ -798,7 +796,7 @@ int luaSpellBlockWalls(lua_State* L)
 {
 	// spell:blockWalls(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getRuneSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getCheckLineOfSight());
@@ -817,7 +815,7 @@ int luaSpellCheckFloor(lua_State* L)
 {
 	// spell:checkFloor(bool)
 	const auto& spellBase = tfs::lua::getSharedPtr<Spell>(L, 1);
-	auto spell = spellBase ? spellBase->getRuneSpell() : nullptr;
+	const auto& spell = spellBase ? spellBase->getRuneSpell() : nullptr;
 	if (spell) {
 		if (lua_gettop(L) == 1) {
 			tfs::lua::pushBoolean(L, spell->getCheckFloor());

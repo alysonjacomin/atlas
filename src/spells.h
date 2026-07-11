@@ -43,13 +43,13 @@ public:
 
 	void clearMaps(bool fromLua);
 	void clear(bool fromLua) override final;
-	bool registerInstantLuaEvent(std::shared_ptr<InstantSpell> instant);
-	bool registerRuneLuaEvent(std::shared_ptr<RuneSpell> rune);
+	bool registerInstantLuaEvent(const std::shared_ptr<InstantSpell>& instant);
+	bool registerRuneLuaEvent(const std::shared_ptr<RuneSpell>& rune);
 
 private:
 	LuaScriptInterface& getScriptInterface() override;
 	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node) override;
+	bool registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node& node) override;
 
 	std::map<uint16_t, std::shared_ptr<RuneSpell>> runes;
 	std::map<std::string, std::shared_ptr<InstantSpell>> instants;

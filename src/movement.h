@@ -50,8 +50,8 @@ public:
 
 	std::shared_ptr<MoveEvent> getEvent(const std::shared_ptr<Item>& item, MoveEvent_t eventType);
 
-	bool registerLuaEvent(std::shared_ptr<MoveEvent> event);
-	bool registerLuaFunction(std::shared_ptr<MoveEvent> event);
+	bool registerLuaEvent(const std::shared_ptr<MoveEvent>& event);
+	bool registerLuaFunction(const std::shared_ptr<MoveEvent>& event);
 	void clear(bool fromLua) override final;
 
 	bool isValid(const std::map<std::shared_ptr<MoveEvent>, std::vector<uint32_t>>& map,
@@ -101,7 +101,7 @@ private:
 	LuaScriptInterface& getScriptInterface() override;
 	std::string_view getScriptBaseName() const override { return "movements"; }
 	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node) override;
+	bool registerEvent(const std::shared_ptr<Event>& event, const pugi::xml_node& node) override;
 
 	void addEvent(std::shared_ptr<MoveEvent> moveEvent, int32_t id, MoveListMap& map);
 
