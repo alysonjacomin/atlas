@@ -105,8 +105,7 @@ std::unique_ptr<Event> MoveEvents::getEvent(const std::string& nodeName)
 
 bool MoveEvents::registerEvent(std::unique_ptr<Event> event, const pugi::xml_node& node)
 {
-	std::shared_ptr<Event> baseEvent = std::move(event);
-	std::shared_ptr<MoveEvent> moveEvent = std::static_pointer_cast<MoveEvent>(baseEvent);
+	std::shared_ptr<MoveEvent> moveEvent {std::unique_ptr<MoveEvent> {static_cast<MoveEvent*>(event.release())}};
 
 	const MoveEvent_t eventType = moveEvent->getEventType();
 	if (eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM) {
