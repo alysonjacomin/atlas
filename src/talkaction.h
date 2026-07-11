@@ -73,8 +73,8 @@ public:
 private:
 	LuaScriptInterface& getScriptInterface() override;
 	std::string_view getScriptBaseName() const override { return "talkactions"; }
-	std::unique_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::unique_ptr<Event> event, const pugi::xml_node& node) override;
+	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
+	bool registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node) override;
 
 	std::map<std::string, std::shared_ptr<TalkAction>> talkActions;
 

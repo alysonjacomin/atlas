@@ -97,8 +97,8 @@ private:
 
 	LuaScriptInterface& getScriptInterface() override;
 	std::string_view getScriptBaseName() const override { return "actions"; }
-	std::unique_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::unique_ptr<Event>, const pugi::xml_node&) override { return false; }
+	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
+	bool registerEvent(std::shared_ptr<Event>, const pugi::xml_node&) override { return false; }
 
 	using ActionUseMap = std::map<uint16_t, std::shared_ptr<Action>>;
 	ActionUseMap useItemMap;

@@ -66,12 +66,12 @@ void Actions::clear(bool fromLua)
 
 LuaScriptInterface& Actions::getScriptInterface() { return scriptInterface; }
 
-std::unique_ptr<Event> Actions::getEvent(const std::string& nodeName)
+std::shared_ptr<Event> Actions::getEvent(const std::string& nodeName)
 {
 	if (!boost::iequals(nodeName, "action")) {
 		return nullptr;
 	}
-	return std::make_unique<Action>(&scriptInterface);
+	return std::make_shared<Action>(&scriptInterface);
 }
 
 bool Actions::registerLuaEvent(std::shared_ptr<Action> event)

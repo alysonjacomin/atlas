@@ -100,8 +100,8 @@ private:
 
 	LuaScriptInterface& getScriptInterface() override;
 	std::string_view getScriptBaseName() const override { return "movements"; }
-	std::unique_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::unique_ptr<Event> event, const pugi::xml_node& node) override;
+	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
+	bool registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node) override;
 
 	void addEvent(std::shared_ptr<MoveEvent> moveEvent, int32_t id, MoveListMap& map);
 

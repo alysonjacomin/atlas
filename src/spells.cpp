@@ -107,20 +107,19 @@ void Spells::clear(bool fromLua)
 
 LuaScriptInterface& Spells::getScriptInterface() { return scriptInterface; }
 
-std::unique_ptr<Event> Spells::getEvent(const std::string& nodeName)
+std::shared_ptr<Event> Spells::getEvent(const std::string& nodeName)
 {
 	if (boost::iequals(nodeName, "rune")) {
-		return std::make_unique<RuneSpell>(&scriptInterface);
+		return std::make_shared<RuneSpell>(&scriptInterface);
 	} else if (boost::iequals(nodeName, "instant")) {
-		return std::make_unique<InstantSpell>(&scriptInterface);
+		return std::make_shared<InstantSpell>(&scriptInterface);
 	}
 	return nullptr;
 }
 
-bool Spells::registerEvent(std::unique_ptr<Event> event, const pugi::xml_node&)
+bool Spells::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
 {
-	auto spellEvent = std::shared_ptr<Event>{std::move(event)};
-	if (auto instant = std::dynamic_pointer_cast<InstantSpell>(spellEvent)) {
+	if (auto instant = std::dynamic_pointer_cast<InstantSpell>(event)) {
 		auto result = instants.emplace(instant->getWords(), instant);
 		if (!result.second) {
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: "
@@ -129,7 +128,7 @@ bool Spells::registerEvent(std::unique_ptr<Event> event, const pugi::xml_node&)
 		return result.second;
 	}
 
-	if (auto rune = std::dynamic_pointer_cast<RuneSpell>(spellEvent)) {
+	if (auto rune = std::dynamic_pointer_cast<RuneSpell>(event)) {
 		auto result = runes.emplace(rune->getRuneItemId(), rune);
 		if (!result.second) {
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: "

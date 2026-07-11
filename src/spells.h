@@ -47,8 +47,8 @@ public:
 
 private:
 	LuaScriptInterface& getScriptInterface() override;
-	std::unique_ptr<Event> getEvent(const std::string& nodeName) override;
-	bool registerEvent(std::unique_ptr<Event> event, const pugi::xml_node& node) override;
+	std::shared_ptr<Event> getEvent(const std::string& nodeName) override;
+	bool registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node) override;
 
 	std::map<uint16_t, std::shared_ptr<RuneSpell>> runes;
 	std::map<std::string, std::shared_ptr<InstantSpell>> instants;
