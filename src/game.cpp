@@ -5536,7 +5536,14 @@ bool Game::reload(ReloadTypes_t reloadType)
 			g_weapons->clear(true);
 			g_weapons->loadDefaults();
 			g_spells->clear(true);
+			if (!g_scripts->loadScripts("scripts/lib", true, true)) {
+				return false;
+			}
 			g_scripts->loadScripts("scripts", false, true);
+			if (!g_monsters.reload()) {
+				std::cout << "[Error - Game::reload] Failed to reload monsters." << std::endl;
+				std::terminate();
+			}
 			/*
 			Npcs::reload();
 			Item::items.reload();
@@ -5571,7 +5578,14 @@ bool Game::reload(ReloadTypes_t reloadType)
 			g_moveEvents->clear(true);
 			g_talkActions->clear(true);
 			g_spells->clear(true);
+			if (!g_scripts->loadScripts("scripts/lib", true, true)) {
+				return false;
+			}
 			g_scripts->loadScripts("scripts", false, true);
+			if (!g_monsters.reload()) {
+				std::cout << "[Error - Game::reload] Failed to reload monsters." << std::endl;
+				std::terminate();
+			}
 			return true;
 		}
 	}
