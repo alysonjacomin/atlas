@@ -130,10 +130,23 @@ using EquipFunction = std::function<ReturnValue(const std::shared_ptr<MoveEvent>
                                                 const std::shared_ptr<Player>& player,
                                                 const std::shared_ptr<Item>& item, slots_t slot, bool boolean)>;
 
-class MoveEvent final : public Event, public std::enable_shared_from_this<MoveEvent>
+class MoveEvent final : public Event
 {
 public:
 	explicit MoveEvent(LuaScriptInterface* luaInterface);
+
+	// non-copyable
+	MoveEvent(const MoveEvent&) = delete;
+	MoveEvent& operator=(const MoveEvent&) = delete;
+
+	std::shared_ptr<MoveEvent> asMoveEvent() override
+	{
+		return std::static_pointer_cast<MoveEvent>(shared_from_this());
+	}
+	std::shared_ptr<const MoveEvent> asMoveEvent() const override
+	{
+		return std::static_pointer_cast<const MoveEvent>(shared_from_this());
+	}
 
 	MoveEvent_t getEventType() const;
 	void setEventType(MoveEvent_t type);

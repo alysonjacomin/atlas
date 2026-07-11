@@ -11,13 +11,25 @@
 using ActionFunction = std::function<bool(const std::shared_ptr<Player>& player, const std::shared_ptr<Item>& item,
                                           const Position& fromPosition, const std::shared_ptr<Thing>& target,
                                           const Position& toPosition, bool isHotkey)>;
+class RuneSpell;
 
 class Action : public Event
 {
 public:
 	explicit Action(LuaScriptInterface* luaInterface);
 
+	// non-copyable
+	Action(const Action&) = delete;
+	Action& operator=(const Action&) = delete;
+
 	bool configureEvent(const pugi::xml_node&) override { return false; }
+	std::shared_ptr<Action> asAction() override final { return std::static_pointer_cast<Action>(shared_from_this()); }
+	std::shared_ptr<const Action> asAction() const override final
+	{
+		return std::static_pointer_cast<const Action>(shared_from_this());
+	}
+	virtual std::shared_ptr<RuneSpell> asRuneSpell() { return nullptr; }
+	virtual std::shared_ptr<const RuneSpell> asRuneSpell() const { return nullptr; }
 
 	// scripting
 	virtual bool executeUse(const std::shared_ptr<Player>& player, const std::shared_ptr<Item>& item,

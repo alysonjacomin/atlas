@@ -105,7 +105,10 @@ std::shared_ptr<Event> MoveEvents::getEvent(const std::string& nodeName)
 
 bool MoveEvents::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node& node)
 {
-	auto moveEvent = std::static_pointer_cast<MoveEvent>(event);
+	auto moveEvent = event->asMoveEvent();
+	if (!moveEvent) {
+		return false;
+	}
 
 	const MoveEvent_t eventType = moveEvent->getEventType();
 	if (eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM) {
@@ -998,7 +1001,7 @@ ReturnValue MoveEvent::fireEquip(const std::shared_ptr<Player>& player, const st
 {
 	ReturnValue ret = RETURNVALUE_NOERROR;
 	if (equipFunction) {
-		ret = equipFunction(shared_from_this(), player, item, slot, isCheck);
+		ret = equipFunction(asMoveEvent(), player, item, slot, isCheck);
 	}
 	if (scripted && (ret == RETURNVALUE_NOERROR) && !executeEquip(player, item, slot, isCheck)) {
 		ret = RETURNVALUE_CANNOTBEDRESSED;

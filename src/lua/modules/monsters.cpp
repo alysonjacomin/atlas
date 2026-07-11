@@ -891,7 +891,7 @@ int luaMonsterTypeGetAttackList(lua_State* L)
 		tfs::lua::setField(L, "range", spellBlock.range);
 		tfs::lua::setField(L, "speed", spellBlock.speed.count());
 		const auto spell = spellBlock.spell.lock();
-		if (const auto& combatSpell = std::dynamic_pointer_cast<CombatSpell>(spell)) {
+		if (const auto& combatSpell = spell ? spell->asCombatSpell() : nullptr) {
 			tfs::lua::pushUserdata(L, combatSpell.get());
 		} else {
 			lua_pushnil(L);
@@ -949,7 +949,7 @@ int luaMonsterTypeGetDefenseList(lua_State* L)
 		tfs::lua::setField(L, "range", spellBlock.range);
 		tfs::lua::setField(L, "speed", spellBlock.speed.count());
 		const auto spell = spellBlock.spell.lock();
-		if (const auto& combatSpell = std::dynamic_pointer_cast<CombatSpell>(spell)) {
+		if (const auto& combatSpell = spell ? spell->asCombatSpell() : nullptr) {
 			tfs::lua::pushUserdata(L, combatSpell.get());
 		} else {
 			lua_pushnil(L);

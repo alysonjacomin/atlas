@@ -5,14 +5,33 @@
 #define FS_BASEEVENTS_H
 
 class LuaScriptInterface;
+class Action;
+class CombatSpell;
+class MoveEvent;
+class TalkAction;
+class Weapon;
 
-class Event
+class Event : public std::enable_shared_from_this<Event>
 {
 public:
 	explicit Event(LuaScriptInterface* luaInterface);
 	virtual ~Event() = default;
 
+	// non-copyable
+	Event(const Event&) = delete;
+	Event& operator=(const Event&) = delete;
+
 	virtual bool configureEvent(const pugi::xml_node& node) = 0;
+	virtual std::shared_ptr<Action> asAction() { return nullptr; }
+	virtual std::shared_ptr<const Action> asAction() const { return nullptr; }
+	virtual std::shared_ptr<TalkAction> asTalkAction() { return nullptr; }
+	virtual std::shared_ptr<const TalkAction> asTalkAction() const { return nullptr; }
+	virtual std::shared_ptr<MoveEvent> asMoveEvent() { return nullptr; }
+	virtual std::shared_ptr<const MoveEvent> asMoveEvent() const { return nullptr; }
+	virtual std::shared_ptr<Weapon> asWeapon() { return nullptr; }
+	virtual std::shared_ptr<const Weapon> asWeapon() const { return nullptr; }
+	virtual std::shared_ptr<CombatSpell> asCombatSpell() { return nullptr; }
+	virtual std::shared_ptr<const CombatSpell> asCombatSpell() const { return nullptr; }
 
 	bool checkScript(const std::string& basePath, const std::string& scriptsName, const std::string& scriptFile) const;
 	bool loadScript(const std::string& scriptFile);

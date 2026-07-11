@@ -99,7 +99,11 @@ std::shared_ptr<Event> Weapons::getEvent(const std::string& nodeName)
 
 bool Weapons::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
 {
-	auto weapon = std::static_pointer_cast<Weapon>(event);
+	auto weapon = event->asWeapon();
+	if (!weapon) {
+		return false;
+	}
+
 	uint16_t weaponId = weapon->getID();
 
 	auto result = weapons.emplace(weaponId, weapon);

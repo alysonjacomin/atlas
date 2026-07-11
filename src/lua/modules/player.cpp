@@ -2060,7 +2060,7 @@ int luaPlayerCanCast(lua_State* L)
 	// player:canCast(spell)
 	const auto& player = tfs::lua::getSharedPtr<Player>(L, 1);
 	std::shared_ptr<Spell> spell = lua_isuserdata(L, 2) ? tfs::lua::getSharedPtr<Spell>(L, 2) : nullptr;
-	const auto& instant = std::dynamic_pointer_cast<InstantSpell>(spell);
+	auto instant = spell ? spell->asInstantSpell() : nullptr;
 	if (player && instant) {
 		tfs::lua::pushBoolean(L, instant->canCast(player));
 	} else {

@@ -90,14 +90,14 @@ int luaSpellOnCastSpell(lua_State* L)
 	// spell:onCastSpell(callback)
 	const auto& spell = tfs::lua::getSharedPtr<Spell>(L, 1);
 	if (spell) {
-		if (const auto& instant = std::dynamic_pointer_cast<InstantSpell>(spell)) {
+		if (const auto& instant = spell->asInstantSpell()) {
 			if (!instant->loadCallback()) {
 				tfs::lua::pushBoolean(L, false);
 				return 1;
 			}
 			instant->scripted = true;
 			tfs::lua::pushBoolean(L, true);
-		} else if (const auto& rune = std::dynamic_pointer_cast<RuneSpell>(spell)) {
+		} else if (const auto& rune = spell->asRuneSpell()) {
 			if (!rune->loadCallback()) {
 				tfs::lua::pushBoolean(L, false);
 				return 1;
@@ -116,14 +116,14 @@ int luaSpellRegister(lua_State* L)
 	// spell:register()
 	const auto& spell = tfs::lua::getSharedPtr<Spell>(L, 1);
 	if (spell) {
-		if (const auto& instant = std::dynamic_pointer_cast<InstantSpell>(spell)) {
+		if (const auto& instant = spell->asInstantSpell()) {
 			if (!instant->isScripted()) {
 				tfs::lua::pushBoolean(L, false);
 				return 1;
 			}
 
 			tfs::lua::pushBoolean(L, g_spells->registerInstantLuaEvent(instant));
-		} else if (const auto& rune = std::dynamic_pointer_cast<RuneSpell>(spell)) {
+		} else if (const auto& rune = spell->asRuneSpell()) {
 			if (rune->getMagicLevel() != 0 || rune->getLevel() != 0) {
 				// Change information in the ItemType to get accurate description
 				ItemType& iType = Item::items.getItemType(rune->getRuneItemId());

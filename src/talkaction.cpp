@@ -38,7 +38,11 @@ std::shared_ptr<Event> TalkActions::getEvent(const std::string& nodeName)
 
 bool TalkActions::registerEvent(std::shared_ptr<Event> event, const pugi::xml_node&)
 {
-	auto talkAction = std::static_pointer_cast<TalkAction>(event);
+	auto talkAction = event->asTalkAction();
+	if (!talkAction) {
+		return false;
+	}
+
 	std::vector<std::string> words = talkAction->getWordsMap();
 
 	for (size_t i = 0; i < words.size(); i++) {

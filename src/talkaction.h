@@ -8,6 +8,8 @@
 #include "const.h"
 #include "lua/script.h"
 
+class InstantSpell;
+
 enum TalkActionResult_t
 {
 	TALKACTION_CONTINUE,
@@ -20,7 +22,21 @@ class TalkAction : public Event
 public:
 	explicit TalkAction(LuaScriptInterface* luaInterface) : Event(luaInterface) {}
 
+	// non-copyable
+	TalkAction(const TalkAction&) = delete;
+	TalkAction& operator=(const TalkAction&) = delete;
+
 	bool configureEvent(const pugi::xml_node&) override { return false; }
+	std::shared_ptr<TalkAction> asTalkAction() override final
+	{
+		return std::static_pointer_cast<TalkAction>(shared_from_this());
+	}
+	std::shared_ptr<const TalkAction> asTalkAction() const override final
+	{
+		return std::static_pointer_cast<const TalkAction>(shared_from_this());
+	}
+	virtual std::shared_ptr<InstantSpell> asInstantSpell() { return nullptr; }
+	virtual std::shared_ptr<const InstantSpell> asInstantSpell() const { return nullptr; }
 
 	const std::string& getWords() const { return words; }
 	const std::vector<std::string>& getWordsMap() const { return wordsMap; }
