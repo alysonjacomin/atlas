@@ -63,11 +63,11 @@ void sighupHandler()
 	Npcs::reload();
 	std::cout << "Reloaded npcs." << std::endl;
 
-	g_monsters.reload();
-	std::cout << "Reloaded monsters." << std::endl;
-
 	g_spells->reload();
 	std::cout << "Reloaded spells." << std::endl;
+
+	g_monsters.reload();
+	std::cout << "Reloaded monsters." << std::endl;
 
 	g_talkActions->reload();
 	std::cout << "Reloaded talk actions." << std::endl;
